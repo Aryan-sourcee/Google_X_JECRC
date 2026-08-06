@@ -1,7 +1,88 @@
 import type { PresetEmergency, IncidentRecord, NearbyService } from '../types/Emergency';
 import earthquakeImg from '../assets/earthquake-disaster.png';
+import intersectionCrashImg from '../assets/intersection-car-crash.png';
 
 export const PRESET_EMERGENCIES: PresetEmergency[] = [
+  {
+    id: 'preset-intersection-car-crash',
+    title: 'City Intersection Multi-Vehicle Collision',
+    category: 'Traffic Crash',
+    imageUrl: intersectionCrashImg,
+    description: 'Major collision at a busy street intersection involving a red hatchback with severe side crush damage, a white sedan, and a downed motorcycle.',
+    mockData: {
+      id: 'INC-2026-traffic-crash-1',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      title: 'Multi-Vehicle Intersection Crash (Red Hatchback & Motorcycle)',
+      imageUrl: intersectionCrashImg,
+      severity: 'HIGH',
+      confidence: 97,
+      summary: 'High-impact collision at a busy city intersection near St. Wilfred College involving a red hatchback with severe side crush damage, a white sedan, and a downed motorcycle. Multiple bystanders gathered with fluid leakage on asphalt.',
+      peopleDetected: 6,
+      vehiclesDetected: 3,
+      estimatedInjuries: 3,
+      injuries: [
+        'Motorcycle rider severe leg fracture & contusions',
+        'Red hatchback driver cervical spine whiplash trauma',
+        'Extremity lacerations from shattered glass'
+      ],
+      hazards: [
+        'Multi-Vehicle Crash',
+        'Intersection Traffic Blockade',
+        'Radiator & Fluid Leakage',
+        'Shattered Glass & Metal Rubble'
+      ],
+      detectedObjects: [
+        'Crumpled Red Hatchback',
+        'White Passenger Sedan',
+        'Downed Motorcycle',
+        'Intersection Crosswalk',
+        'Traffic Signal Post',
+        'Bystander Crowd'
+      ],
+      immediateActions: [
+        'Divert oncoming intersection traffic using reflective markers to prevent secondary impact.',
+        'Do not move the downed motorcyclist or red car driver to prevent cervical cord injury.',
+        'Disconnect battery cables on damaged vehicles to eliminate electrical ignition risk.',
+        'Request immediate 108 Advanced Life Support Ambulance and Traffic Control Unit.'
+      ],
+      medicalAdvice: [
+        'Immobilize cervical spine with rigid collar prior to extrication',
+        'Apply firm pressure dressing to active extremity arterial bleeding'
+      ],
+      fireRisk: false,
+      fuelLeakage: true,
+      roadBlocked: true,
+      rescuePriority: 'URGENT',
+      sosMessage: 'URGENT ROAD ACCIDENT ALERT! Collision involving Red Hatchback, White Sedan, and Motorcycle at St. Wilfred College Intersection, Jaipur. 3 injured occupants. Road blocked. Need 108 Ambulance immediately.',
+      voiceResponse: 'Multi-vehicle crash detected at city intersection involving red hatchback and motorcycle. 3 injured persons require medical triage. Clear oncoming traffic immediately.',
+      locationName: 'Near St. Wilfred College Intersection, Jaipur, Rajasthan',
+      coordinates: { lat: 26.8524, lng: 75.7873 },
+      recommendedServices: ['108 Trauma Ambulance Squad', 'Traffic Control Police', 'Heavy Hydraulic Tow Unit'],
+      timeline: [
+        {
+          timeframe: '0 - 2 Min',
+          title: 'Intersection Safety & Crowd Control',
+          riskDescription: 'Oncoming traffic approaching un-signaled collision zone.',
+          priorityAction: 'Set up warning cones 50m upstream and move spectators off crosswalk.',
+          severity: 'critical'
+        },
+        {
+          timeframe: '2 - 5 Min',
+          title: 'Spinal Triage for Motorcyclist',
+          riskDescription: 'Downed motorcyclist exhibiting acute neck pain and limb deformation.',
+          priorityAction: 'Immobilize head and neck, check peripheral pulse in affected limb.',
+          severity: 'warning'
+        },
+        {
+          timeframe: '5 - 10 Min',
+          title: 'Fluid Containment & Vehicle Extraction',
+          riskDescription: 'Engine oil and coolant pooling on wet crosswalk asphalt.',
+          priorityAction: 'Apply absorbent sand to fluid spill, await tow truck extrication.',
+          severity: 'info'
+        }
+      ]
+    }
+  },
   {
     id: 'preset-earthquake-disaster',
     title: 'Severe Earthquake Structural Collapse',
@@ -9,7 +90,7 @@ export const PRESET_EMERGENCIES: PresetEmergency[] = [
     imageUrl: earthquakeImg,
     description: 'Catastrophic seismic damage showing tilted residential buildings, collapsed tile roofs, downed power lines, and debris blocking narrow roads.',
     mockData: {
-      id: 'INC-2026- earthquake-1',
+      id: 'INC-2026-earthquake-1',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       title: 'Earthquake Structural Collapse & Powerline Failure',
       imageUrl: earthquakeImg,
@@ -79,76 +160,6 @@ export const PRESET_EMERGENCIES: PresetEmergency[] = [
           riskDescription: 'Potential seismic aftershocks destabilizing structural foundations.',
           priorityAction: 'Anchor support struts around leaning residential facades.',
           severity: 'warning'
-        }
-      ]
-    }
-  },
-  {
-    id: 'preset-car-crash',
-    title: 'Highway Multi-Vehicle Crash',
-    category: 'Traffic Collision',
-    imageUrl: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1000&q=80',
-    description: 'High-speed two-car collision with visible structural compression and fuel vapor trail.',
-    mockData: {
-      id: 'INC-2026-8921',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      title: 'Highway Collision & Fuel Vapor Risk',
-      imageUrl: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1000&q=80',
-      severity: 'HIGH',
-      confidence: 97,
-      summary: 'This appears to be a high-severity road accident involving two passenger vehicles and 3 occupants. Visible fuel leakage and smoke increase the risk of ignition. Immediate medical triage and traffic control recommended.',
-      peopleDetected: 3,
-      vehiclesDetected: 2,
-      estimatedInjuries: 2,
-      injuries: ['Possible leg trauma', 'Scalp laceration & bleeding'],
-      hazards: [
-        'Car Collision',
-        'Active Fuel Leakage',
-        'Fire Risk',
-        'High Speed Road Blocked',
-        'Glass Debris'
-      ],
-      detectedObjects: ['Sedan Car', 'SUV Vehicle', 'Shattered Windshield', 'Poured Fuel Vapor', 'Highway Guardrail'],
-      immediateActions: [
-        'Safely extract conscious victims away from leaking fuel vapors.',
-        'Do not start engines or ignite any open fires nearby.',
-        'Apply firm pressure with clean fabric to control extremity bleeding.',
-        'Alert oncoming traffic using hazard flare/reflective vest.'
-      ],
-      medicalAdvice: [
-        'Suspected cervical spine trauma for driver of primary vehicle.',
-        'Monitor for signs of acute shock and respiratory distress.'
-      ],
-      fireRisk: true,
-      fuelLeakage: true,
-      roadBlocked: true,
-      rescuePriority: 'URGENT',
-      sosMessage: 'EMERGENCY! Road collision near NH-48 Corridor. 2 occupants injured with active fuel leakage. Immediate ambulance and fire squad required.',
-      voiceResponse: 'Two injured persons detected. Please move away from the vehicle immediately due to possible fuel leakage and fire hazard.',
-      locationName: 'NH-48 Corridor, Near Exit 14, Jaipur, Rajasthan',
-      coordinates: { lat: 26.9124, lng: 75.7873 },
-      recommendedServices: ['Level-1 Trauma Center', 'Heavy Extrication Fire Engine', 'Traffic Patrol Unit'],
-      timeline: [
-        {
-          timeframe: '0 - 2 Min',
-          title: 'Fuel Leakage & Ignition Risk',
-          riskDescription: 'Flammable fuel pooling around battery terminal electrical leads.',
-          priorityAction: 'Disconnect vehicle battery if safely accessible, evacuate 15m radius.',
-          severity: 'critical'
-        },
-        {
-          timeframe: '2 - 5 Min',
-          title: 'Traffic Bottleneck & Secondary Impact',
-          riskDescription: 'High-speed oncoming highway traffic approaching blocked lane.',
-          priorityAction: 'Deploy warning signs 100 meters upstream to prevent pileup.',
-          severity: 'warning'
-        },
-        {
-          timeframe: '5 - 10 Min',
-          title: 'Hypovolemic Shock Risk',
-          riskDescription: 'Victim 2 exhibiting signs of severe internal or extremity hemorrhage.',
-          priorityAction: 'Maintain compression dressings, keep patient warm, await Advanced Life Support.',
-          severity: 'critical'
         }
       ]
     }
