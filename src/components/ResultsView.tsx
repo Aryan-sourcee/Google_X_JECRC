@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Car, Flame, Droplet, AlertOctagon, CheckCircle, Volume2, MapPin, Share2, Sparkles, HeartPulse } from 'lucide-react';
+import { Users, Car, Flame, Droplet, AlertOctagon, CheckCircle, Volume2, MapPin, Share2, Sparkles, HeartPulse, Tag, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { EmergencyAnalysis } from '../types/Emergency';
 import { IncidentTimeline } from './IncidentTimeline';
@@ -30,11 +30,11 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
         }`}
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex items-center space-x-5">
+          <div className="flex items-start sm:items-center space-x-5">
             <img
               src={analysis.imageUrl}
               alt="Analyzed Emergency Scene"
-              className="h-24 w-24 rounded-2xl object-cover border-2 border-white/10 shadow-lg"
+              className="h-24 w-24 rounded-2xl object-cover border-2 border-white/10 shadow-lg shrink-0"
             />
             <div>
               <div className="flex items-center space-x-3">
@@ -67,7 +67,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               onClick={onPlayVoice}
               className="flex items-center space-x-2 rounded-2xl bg-blue-600 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-500"
             >
-              <Volume2 className="h-4 w-4" />
+              <Volume2 className="h-4 w-4 animate-bounce" />
               <span>🔊 Voice Guidance</span>
             </button>
 
@@ -90,7 +90,27 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
         </div>
       </motion.div>
 
-      {/* Detected Hazards & Objects Chips Row */}
+      {/* 🔥 WOW FEATURE: Executive AI Incident Summary Card */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="rounded-3xl border border-blue-500/40 bg-gradient-to-r from-slate-900 via-indigo-950/70 to-slate-900 p-6 backdrop-blur-2xl shadow-xl space-y-3"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-xs font-extrabold uppercase tracking-wider text-blue-400">
+            <Activity className="h-4 w-4 animate-pulse text-blue-400" />
+            <span>🔥 WOW Feature • Executive AI Incident Summary</span>
+          </div>
+          <span className="rounded-full bg-blue-500/20 px-3 py-0.5 text-[10px] font-bold text-blue-300 border border-blue-500/30">
+            Gemini Multimodal Reasoning
+          </span>
+        </div>
+        <p className="text-sm font-medium text-slate-100 leading-relaxed italic border-l-4 border-blue-500 pl-4 py-1">
+          "{analysis.summary}"
+        </p>
+      </motion.div>
+
+      {/* Detected Hazards & Parameters Chips Row */}
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Detected Scene Parameters</h2>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -100,7 +120,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400">Humans</p>
+              <p className="text-[10px] text-slate-400">Occupants</p>
               <p className="text-base font-bold text-white">{analysis.peopleDetected} Detected</p>
             </div>
           </div>
@@ -147,6 +167,39 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               <p className="text-[10px] text-slate-400">Traffic Block</p>
               <p className="text-base font-bold text-white">{analysis.roadBlocked ? 'Blocked' : 'Passable'}</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Injuries & Detected Objects Tags */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Detected Injuries */}
+        <div className="glass-card p-5 border border-red-500/30 space-y-3">
+          <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center space-x-2">
+            <HeartPulse className="h-4 w-4 text-red-400" />
+            <span>Identified Physical Injuries ({analysis.injuries.length})</span>
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {analysis.injuries.map((inj, i) => (
+              <span key={i} className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300">
+                🚨 {inj}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Detected Objects */}
+        <div className="glass-card p-5 border border-indigo-500/30 space-y-3">
+          <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center space-x-2">
+            <Tag className="h-4 w-4 text-indigo-400" />
+            <span>Gemini Vision Object Tags ({analysis.detectedObjects.length})</span>
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {analysis.detectedObjects.map((obj, i) => (
+              <span key={i} className="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-300">
+                🔍 {obj}
+              </span>
+            ))}
           </div>
         </div>
       </div>

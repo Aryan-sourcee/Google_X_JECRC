@@ -15,16 +15,21 @@ export interface EmergencyAnalysis {
   imageUrl: string;
   severity: EmergencySeverity;
   confidence: number;
+  summary: string; // WOW Feature: Comprehensive AI Incident Summary
   peopleDetected: number;
   vehiclesDetected: number;
   estimatedInjuries: number;
+  injuries: string[];
   hazards: string[];
+  detectedObjects: string[];
   immediateActions: string[];
   medicalAdvice: string[];
   fireRisk: boolean;
   fuelLeakage: boolean;
   roadBlocked: boolean;
   rescuePriority: 'HIGH' | 'URGENT' | 'STANDARD';
+  sosMessage: string;
+  voiceResponse: string;
   locationName: string;
   coordinates: {
     lat: number;

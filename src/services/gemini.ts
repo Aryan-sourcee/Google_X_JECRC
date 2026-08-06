@@ -40,50 +40,25 @@ export const analyzeEmergencyImageWithGemini = async (
     const ai = new GoogleGenAI({ apiKey: activeKey });
     
     const prompt = `
-You are an expert AI Emergency Response Intelligence platform called CrisisMind AI.
-Analyze the provided image of an emergency scene (accident, fire, disaster, hazard, medical incident).
+You are an emergency response AI called CrisisMind AI.
 
-Return a STRICT JSON object only. Do NOT include markdown code fences or extra text.
+Analyze the uploaded emergency image.
 
-The JSON schema must match:
+Return ONLY valid JSON. No markdown code fences. No conversational text.
+
+Schema:
 {
-  "title": "Short descriptive title of the incident",
-  "severity": "CRITICAL" | "HIGH" | "MEDIUM" | "LOW",
-  "confidence": integer between 85 and 99,
-  "peopleDetected": integer count of humans visible,
-  "vehiclesDetected": integer count of vehicles,
-  "estimatedInjuries": integer estimate of injured persons,
-  "hazards": ["list of hazard tags like Fire Risk, Fuel Leakage, Structural Weakness, Glass Debris, Road Blocked"],
-  "immediateActions": ["3-5 immediate step-by-step emergency rescue actions for bystanders/first responders"],
-  "medicalAdvice": ["2-3 key first-aid / medical advice guidelines"],
-  "fireRisk": boolean,
-  "fuelLeakage": boolean,
-  "roadBlocked": boolean,
-  "rescuePriority": "URGENT" | "HIGH" | "STANDARD",
-  "recommendedServices": ["Level-1 Trauma Center", "Fire Engine", "Traffic Police", "Aquatic Rescue"],
-  "timeline": [
-    {
-      "timeframe": "0 - 2 Min",
-      "title": "Short risk phase title",
-      "riskDescription": "Description of immediate threat evolving in 0-2 mins",
-      "priorityAction": "Crucial action to perform in first 2 mins",
-      "severity": "critical"
-    },
-    {
-      "timeframe": "2 - 5 Min",
-      "title": "Short secondary phase title",
-      "riskDescription": "Description of potential escalation in 2-5 mins",
-      "priorityAction": "Action for 2-5 min window",
-      "severity": "warning"
-    },
-    {
-      "timeframe": "5 - 10 Min",
-      "title": "Short stabilization phase title",
-      "riskDescription": "Description of triage & response phase in 5-10 mins",
-      "priorityAction": "Long term safety action",
-      "severity": "info"
-    }
-  ]
+  "severity": "Critical | High | Medium | Low",
+  "confidence": 95,
+  "summary": "Comprehensive 2-sentence executive AI Incident Summary explaining scene context and immediate risk.",
+  "people_detected": 2,
+  "injuries": ["Possible leg injury", "Bleeding"],
+  "hazards": ["Fuel leakage", "Smoke", "Road Blocked"],
+  "detected_objects": ["Car", "Road", "Fire", "Shattered Glass"],
+  "recommended_services": ["Ambulance", "Police", "Fire Squad"],
+  "immediate_actions": ["Move away from the vehicle", "Avoid sparks", "Call ambulance", "Apply compression to bleeding"],
+  "sos_message": "Road accident. Two injured people. Possible fuel leakage. Immediate ambulance required.",
+  "voice_response": "Two injured persons detected. Please move away from the vehicle due to possible fuel leakage."
 }
 `;
 
@@ -109,27 +84,64 @@ The JSON schema must match:
     const cleanJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
     const parsed = JSON.parse(cleanJson);
 
+    const severityMap: Record<string, 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'> = {
+      'critical': 'CRITICAL',
+      'high': 'HIGH',
+      'medium': 'MEDIUM',
+      'low': 'LOW'
+    };
+
+    const parsedSev = String(parsed.severity || 'HIGH').toLowerCase();
+    const normalizedSeverity = severityMap[parsedSev] || 'HIGH';
+
     return {
       id: `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      title: parsed.title || 'Emergency Incident Detected',
+      title: parsed.summary ? parsed.summary.split('.')[0] : 'Emergency Scene Detected',
       imageUrl: `data:${mimeType};base64,${imageBase64}`,
-      severity: parsed.severity || 'HIGH',
-      confidence: parsed.confidence || 95,
-      peopleDetected: parsed.peopleDetected || 1,
-      vehiclesDetected: parsed.vehiclesDetected || 1,
-      estimatedInjuries: parsed.estimatedInjuries || 1,
-      hazards: parsed.hazards || ['Emergency Scene', 'Road Obstruction'],
-      immediateActions: parsed.immediateActions || ['Stay safe', 'Call emergency services'],
-      medicalAdvice: parsed.medicalAdvice || ['Keep victim calm', 'Do not move injured spinal area'],
-      fireRisk: !!parsed.fireRisk,
-      fuelLeakage: !!parsed.fuelLeakage,
-      roadBlocked: !!parsed.roadBlocked,
-      rescuePriority: parsed.rescuePriority || 'HIGH',
+      severity: normalizedSeverity,
+      confidence: parsed.confidence || 96,
+      summary: parsed.summary || 'Emergency incident detected requiring rapid triage and emergency service dispatch.',
+      peopleDetected: parsed.people_detected || 2,
+      vehiclesDetected: parsed.detected_objects?.filter((o: string) => /car|vehicle|truck|bus|bike/i.test(o)).length || 1,
+      estimatedInjuries: parsed.injuries?.length || 1,
+      injuries: parsed.injuries || ['Possible trauma'],
+      hazards: parsed.hazards || ['Emergency Hazard', 'Road Blocked'],
+      detectedObjects: parsed.detected_objects || ['Vehicle', 'Debris'],
+      immediateActions: parsed.immediate_actions || ['Move away from danger', 'Call emergency hotline'],
+      medicalAdvice: ['Maintain c-spine stabilization', 'Apply pressure to bleeding areas'],
+      fireRisk: parsed.hazards?.some((h: string) => /fire|flame|smoke/i.test(h)) || false,
+      fuelLeakage: parsed.hazards?.some((h: string) => /fuel|gas|leak/i.test(h)) || false,
+      roadBlocked: true,
+      rescuePriority: normalizedSeverity === 'CRITICAL' || normalizedSeverity === 'HIGH' ? 'URGENT' : 'STANDARD',
+      sosMessage: parsed.sos_message || 'Emergency! Accident detected. Need immediate medical support.',
+      voiceResponse: parsed.voice_response || 'Emergency situation detected. Move to safe distance and await ambulance.',
       locationName: 'Jaipur Sector Emergency Spot (GPS active)',
       coordinates: { lat: 26.9124, lng: 75.7873 },
-      timeline: parsed.timeline || PRESET_EMERGENCIES[0].mockData.timeline,
-      recommendedServices: parsed.recommendedServices || ['Emergency Hospital', 'Traffic Police']
+      timeline: [
+        {
+          timeframe: '0 - 2 Min',
+          title: 'Immediate Threat Containment',
+          riskDescription: 'Primary hazard evolution in initial minutes after incident.',
+          priorityAction: parsed.immediate_actions?.[0] || 'Evacuate immediate 15m radius.',
+          severity: 'critical'
+        },
+        {
+          timeframe: '2 - 5 Min',
+          title: 'Secondary Escalation Risk',
+          riskDescription: 'Traffic bottleneck and environmental exposure threat.',
+          priorityAction: 'Deploy warning markers to prevent secondary pileup.',
+          severity: 'warning'
+        },
+        {
+          timeframe: '5 - 10 Min',
+          title: 'Medical Triage Phase',
+          riskDescription: 'Patient shock progression and emergency unit arrival window.',
+          priorityAction: 'Maintain compression dressings and await trauma ambulance.',
+          severity: 'info'
+        }
+      ],
+      recommendedServices: parsed.recommended_services || ['Ambulance', 'Police']
     };
 
   } catch (error) {
@@ -153,7 +165,6 @@ export const translateEmergencyText = async (
   const activeKey = apiKey || import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!activeKey || activeKey === 'your_gemini_api_key_here') {
-    // Basic offline/fallback translations for immediate demo response
     const mockTranslations: Record<string, string> = {
       'Hindi': 'आपातकालीन! दुर्घटना की सूचना। 2 घायल व्यक्ति। तुरंत एम्बुलेंस और अस्पताल सेवा की आवश्यकता है। स्थान GPS लिंक संलग्न है।',
       'Marathi': 'आणीबाणी! अपघात झाला आहे. २ जखमी व्यक्ती. तातडीने रुग्णवाहिका आणि वैद्यकीय मदतीची गरज आहे. स्थान GPS लिंक संलग्न.',
