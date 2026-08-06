@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Camera, FileImage, Sparkles, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Upload, Camera, FileImage, Sparkles, AlertCircle, X, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PRESET_EMERGENCIES } from '../data/mockData';
 
 interface UploadViewProps {
@@ -12,7 +12,12 @@ export const UploadView: React.FC<UploadViewProps> = ({ onAnalyzeFile, onSelectP
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -47,13 +52,61 @@ export const UploadView: React.FC<UploadViewProps> = ({ onAnalyzeFile, onSelectP
     }
   };
 
+  // Live Camera WebCam Trigger
+  const startCamera = async () => {
+    try {
+      setIsCameraActive(true);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error('Camera access error:', err);
+      alert('Unable to access device camera. Please allow camera permissions or upload an image file.');
+      setIsCameraActive(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const capturedFile = new File([blob], `camera-emergency-${Date.now()}.jpg`, { type: 'image/jpeg' });
+            setSelectedFile(capturedFile);
+            setPreviewUrl(URL.createObjectURL(capturedFile));
+            stopCamera();
+          }
+        }, 'image/jpeg', 0.95);
+      }
+    }
+  };
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-8">
       {/* Header text */}
       <div className="text-center">
         <h1 className="text-3xl font-extrabold text-white sm:text-4xl">Upload Emergency Scene</h1>
         <p className="mt-2 text-sm text-slate-300">
-          Provide a photo from your device or camera. Gemini Vision AI will analyze hazards and compute a 10-second rescue directive.
+          Provide a real photo from your device or camera. Gemini Vision AI will analyze hazards and compute a 10-second rescue directive.
         </p>
       </div>
 
@@ -107,7 +160,7 @@ export const UploadView: React.FC<UploadViewProps> = ({ onAnalyzeFile, onSelectP
 
             <div>
               <p className="text-base font-bold text-white">Drag & drop emergency photo here</p>
-              <p className="text-xs text-slate-400 mt-1">or click below to browse files from your computer</p>
+              <p className="text-xs text-slate-400 mt-1">or click below to browse files or use camera</p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3">
@@ -118,11 +171,11 @@ export const UploadView: React.FC<UploadViewProps> = ({ onAnalyzeFile, onSelectP
                 Browse Files
               </button>
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center space-x-1.5 rounded-xl border border-white/10 bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700"
+                onClick={startCamera}
+                className="flex items-center space-x-1.5 rounded-xl border border-indigo-500/40 bg-indigo-600/20 px-4 py-2.5 text-xs font-bold text-indigo-300 hover:bg-indigo-600 hover:text-white"
               >
-                <Camera className="h-4 w-4 text-indigo-400" />
-                <span>Use Camera</span>
+                <Camera className="h-4 w-4" />
+                <span>Take Real Photo with Camera</span>
               </button>
             </div>
 
@@ -139,16 +192,63 @@ export const UploadView: React.FC<UploadViewProps> = ({ onAnalyzeFile, onSelectP
             className="flex items-center space-x-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-red-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-blue-500/25 transition hover:scale-105"
           >
             <Sparkles className="h-5 w-5" />
-            <span>Analyze Emergency Scene with Gemini</span>
+            <span>Analyze Real Image with Gemini API</span>
           </button>
         </motion.div>
       )}
+
+      {/* Live Camera Snapshot Modal */}
+      <AnimatePresence>
+        {isCameraActive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-xl rounded-3xl border border-white/15 bg-slate-900 p-6 shadow-2xl space-y-4"
+            >
+              <button
+                onClick={stopCamera}
+                className="absolute right-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-white/5 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center space-x-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
+                <Camera className="h-4 w-4 animate-pulse" />
+                <span>Live Device Camera Capture</span>
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950 h-80 flex items-center justify-center">
+                <video ref={videoRef} autoPlay playsInline className="h-full w-full object-cover rounded-2xl" />
+                <canvas ref={canvasRef} className="hidden" />
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-2">
+                <button
+                  onClick={stopCamera}
+                  className="rounded-xl border border-white/10 bg-slate-800 px-4 py-2.5 text-xs font-bold text-slate-300 hover:bg-slate-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={capturePhoto}
+                  className="flex items-center space-x-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-indigo-500"
+                >
+                  <Check className="h-4 w-4" />
+                  <span>Capture Snapshot</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Presets Fallback Box */}
       <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5">
         <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5 mb-3">
           <AlertCircle className="h-4 w-4 text-blue-400" />
-          <span>Don't have a photo? Select a sample emergency scenario:</span>
+          <span>Or test with pre-crafted real emergency scenario photos:</span>
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {PRESET_EMERGENCIES.map((preset) => (
