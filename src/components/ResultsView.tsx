@@ -9,6 +9,7 @@ interface ResultsViewProps {
   onNavigateToMap: () => void;
   onNavigateToSOS: () => void;
   onPlayVoice: () => void;
+  onScanNew?: () => void;
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({
@@ -16,6 +17,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   onNavigateToMap,
   onNavigateToSOS,
   onPlayVoice,
+  onScanNew,
 }) => {
   const isCritical = analysis.severity === 'CRITICAL' || analysis.severity === 'HIGH';
 
@@ -63,6 +65,16 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
           {/* Action Button Row */}
           <div className="flex flex-wrap gap-2.5">
+            {onScanNew && (
+              <button
+                onClick={onScanNew}
+                className="flex items-center space-x-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-600/30 transition hover:from-emerald-500 hover:to-teal-500"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Scan New Scene</span>
+              </button>
+            )}
+
             <button
               onClick={onPlayVoice}
               className="flex items-center space-x-2 rounded-2xl bg-blue-600 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-500"

@@ -32,26 +32,32 @@ export default function App() {
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_GEMINI_API_KEY || '');
 
-  // Active Emergency State (Defaults to User Earthquake Image preset)
+  // Active Emergency State
   const [currentAnalysis, setCurrentAnalysis] = useState<EmergencyAnalysis>(
     PRESET_EMERGENCIES[0].mockData
   );
   const [incidentsHistory, setIncidentsHistory] = useState<IncidentRecord[]>(INITIAL_INCIDENTS_HISTORY);
   const [scanningImagePreview, setScanningImagePreview] = useState<string | undefined>(undefined);
+  const [isScanningReady, setIsScanningReady] = useState<boolean>(true);
 
   // Handlers
-  const handleSelectPreset = (presetId: string) => {
+  const handleSelectPreset = async (presetId: string) => {
     const preset = PRESET_EMERGENCIES.find((p) => p.id === presetId);
     if (preset) {
-      setCurrentAnalysis(preset.mockData);
+      setIsScanningReady(false);
       setScanningImagePreview(preset.imageUrl);
       setActiveTab('scanning');
+
+      await new Promise((r) => setTimeout(r, 1200));
+      setCurrentAnalysis(preset.mockData);
+      setIsScanningReady(true);
     }
   };
 
   const handleAnalyzeFile = async (file: File) => {
     try {
       const preview = URL.createObjectURL(file);
+      setIsScanningReady(false);
       setScanningImagePreview(preview);
       setActiveTab('scanning');
 
@@ -62,8 +68,10 @@ export default function App() {
 
       // Add to incident history
       setIncidentsHistory((prev) => [analysis as IncidentRecord, ...prev]);
+      setIsScanningReady(true);
     } catch (err) {
       console.error('File analysis error:', err);
+      setIsScanningReady(true);
     }
   };
 
@@ -125,6 +133,7 @@ export default function App() {
         {activeTab === 'scanning' && (
           <ScanningOverlayView
             imagePreviewUrl={scanningImagePreview}
+            isReady={isScanningReady}
             onScanComplete={handleScanComplete}
           />
         )}
@@ -135,6 +144,7 @@ export default function App() {
             onNavigateToMap={() => setActiveTab('map')}
             onNavigateToSOS={() => setActiveTab('sos')}
             onPlayVoice={handlePlayVoiceGuidance}
+            onScanNew={() => setActiveTab('upload')}
           />
         )}
 

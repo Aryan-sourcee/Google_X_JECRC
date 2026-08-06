@@ -4,14 +4,16 @@ import { motion } from 'framer-motion';
 
 interface ScanningOverlayViewProps {
   imagePreviewUrl?: string;
+  isReady?: boolean;
   onScanComplete: () => void;
 }
 
 export const ScanningOverlayView: React.FC<ScanningOverlayViewProps> = ({
   imagePreviewUrl,
+  isReady = true,
   onScanComplete,
 }) => {
-  const [progress, setProgress] = useState(12);
+  const [progress, setProgress] = useState(15);
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
@@ -27,18 +29,21 @@ export const ScanningOverlayView: React.FC<ScanningOverlayViewProps> = ({
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress((prev) => {
+        if (prev >= 92 && !isReady) {
+          return 92; // Pause at 92% until Gemini API completes
+        }
         if (prev >= 100) {
           clearInterval(timer);
-          setTimeout(onScanComplete, 500);
+          setTimeout(onScanComplete, 400);
           return 100;
         }
         const next = prev + Math.floor(Math.random() * 12) + 8;
-        return next > 100 ? 100 : next;
+        return next > 98 ? (isReady ? 100 : 92) : next;
       });
-    }, 280);
+    }, 250);
 
     return () => clearInterval(timer);
-  }, [onScanComplete]);
+  }, [isReady, onScanComplete]);
 
   useEffect(() => {
     const currentStepIndex = Math.min(
@@ -74,12 +79,12 @@ export const ScanningOverlayView: React.FC<ScanningOverlayViewProps> = ({
           {/* Animated Scanning Line */}
           <motion.div
             animate={{ y: ['0%', '100%', '0%'] }}
-            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
             className="absolute left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-400 to-red-500 shadow-lg shadow-blue-500"
           />
 
           <div className="absolute bottom-2 left-2 right-2 rounded-lg bg-slate-950/80 py-1 text-[10px] font-bold text-blue-400 backdrop-blur-md">
-            SCANNING SCENE
+            SCANNING LIVE SCENE
           </div>
         </div>
 
