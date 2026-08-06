@@ -35,9 +35,13 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-blue-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-400">
               <Activity className="h-4 w-4 animate-pulse" />
               <span>Real-Time Incident Monitoring Active</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-emerald-400 font-bold">Lead: Aryan Meena</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-indigo-400 font-bold">Collaborator: Lakshaya Kumawat</span>
             </div>
             <h1 className="mt-2 text-3xl font-extrabold text-white sm:text-4xl">
               Hello {userName} <span className="inline-block animate-bounce">👋</span>

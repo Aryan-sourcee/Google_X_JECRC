@@ -22,9 +22,10 @@ import { speechService } from './services/speech';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('splash');
-  const [user, setUser] = useState<{ name: string; email: string } | null>({
-    name: 'Aryan Sharma',
-    email: 'aryan@example.com',
+  const [user, setUser] = useState<{ name: string; email: string; role?: string } | null>({
+    name: 'Aryan Meena',
+    email: 'aryan.meena@crisismind.ai',
+    role: 'Lead Developer',
   });
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);

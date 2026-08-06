@@ -105,14 +105,17 @@ export const SplashView: React.FC<SplashViewProps> = ({ onStart }) => {
         </motion.div>
       </div>
 
-      {/* Powered By Footer */}
+      {/* Powered By & Team Footer */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="relative z-10 mt-12 text-center"
+        className="relative z-10 mt-12 text-center space-y-2"
       >
-        <p className="text-xs font-medium uppercase tracking-widest text-slate-500 mb-2">Powered by</p>
+        <p className="text-xs font-semibold text-slate-300">
+          Engineered by <span className="text-emerald-400 font-bold">Aryan Meena</span> & Collaborator <span className="text-indigo-400 font-bold">Lakshaya Kumawat</span>
+        </p>
+        <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Powered by</p>
         <div className="flex items-center justify-center space-x-6 text-xs text-slate-400">
           <span className="flex items-center space-x-1 font-semibold text-slate-300">
             <span className="h-2 w-2 rounded-full bg-blue-500" /> Google Gemini 2.5/3.6

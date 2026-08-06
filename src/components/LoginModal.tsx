@@ -1,11 +1,11 @@
 import React from 'react';
-import { Shield, X, UserCheck } from 'lucide-react';
+import { Shield, X, UserCheck, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: (user: { name: string; email: string }) => void;
+  onLogin: (user: { name: string; email: string; role: string }) => void;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => {
@@ -18,7 +18,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-6 shadow-2xl"
+          className="relative w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-6 shadow-2xl space-y-6"
         >
           {/* Close Button */}
           <button
@@ -35,50 +35,58 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
                 <Shield className="h-7 w-7 text-blue-400" />
               </div>
             </div>
-            <h2 className="mt-4 font-sans text-2xl font-bold text-white">Welcome to CrisisMind AI</h2>
-            <p className="mt-1 text-xs text-slate-400">Sign in to access real-time emergency responder tools.</p>
+            <h2 className="mt-4 font-sans text-2xl font-bold text-white">CrisisMind AI Command Auth</h2>
+            <p className="mt-1 text-xs text-slate-400">Select active team member or emergency responder profile.</p>
           </div>
 
-          {/* Login Options */}
-          <div className="mt-6 space-y-3">
-            {/* Google Sign In */}
+          {/* Team Login Options */}
+          <div className="space-y-3">
+            {/* Aryan Meena */}
             <button
-              onClick={() => onLogin({ name: 'Aryan Sharma', email: 'aryan@example.com' })}
-              className="flex w-full items-center justify-center space-x-3 rounded-2xl border border-white/10 bg-white/5 py-3.5 px-4 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-blue-500/40"
+              onClick={() => onLogin({ name: 'Aryan Meena', email: 'aryan.meena@crisismind.ai', role: 'Lead Developer' })}
+              className="flex w-full items-center justify-between rounded-2xl border border-blue-500/30 bg-blue-500/10 p-3.5 text-left transition hover:bg-blue-500/20 hover:border-blue-500/60"
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                />
-              </svg>
-              <span>Continue with Google</span>
+              <div className="flex items-center space-x-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white shadow-md">
+                  AM
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">Aryan Meena</p>
+                  <p className="text-[11px] text-blue-300">Lead Engineer • Command Center</p>
+                </div>
+              </div>
+              <Sparkles className="h-4 w-4 text-blue-400" />
             </button>
 
-            {/* Guest / Anonymous Sign In */}
+            {/* Lakshaya Kumawat */}
             <button
-              onClick={() => onLogin({ name: 'Emergency Responder', email: 'guest@crisismind.ai' })}
-              className="flex w-full items-center justify-center space-x-2 rounded-2xl border border-white/10 bg-slate-800/80 py-3.5 px-4 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
+              onClick={() => onLogin({ name: 'Lakshaya Kumawat', email: 'lakshaya.kumawat@crisismind.ai', role: 'Collaborator & Systems' })}
+              className="flex w-full items-center justify-between rounded-2xl border border-indigo-500/30 bg-indigo-500/10 p-3.5 text-left transition hover:bg-indigo-500/20 hover:border-indigo-500/60"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-md">
+                  LK
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">Lakshaya Kumawat</p>
+                  <p className="text-[11px] text-indigo-300">Collaborator • AI Systems Architect</p>
+                </div>
+              </div>
+              <Sparkles className="h-4 w-4 text-indigo-400" />
+            </button>
+
+            {/* Guest Sign In */}
+            <button
+              onClick={() => onLogin({ name: 'Emergency Responder', email: 'dispatch@crisismind.ai', role: 'Field Dispatcher' })}
+              className="flex w-full items-center justify-center space-x-2 rounded-2xl border border-white/10 bg-slate-800/80 py-3 text-xs font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
             >
               <UserCheck className="h-4 w-4 text-emerald-400" />
-              <span>Continue as Anonymous Responder</span>
+              <span>Continue as Field Dispatcher</span>
             </button>
           </div>
 
-          <p className="mt-6 text-center text-[11px] text-slate-500">
-            By continuing, you agree to emergency dispatch protocols & data privacy terms.
+          <p className="text-center text-[11px] text-slate-500">
+            Authorized access for CrisisMind AI Emergency Response Platform.
           </p>
         </motion.div>
       </div>
