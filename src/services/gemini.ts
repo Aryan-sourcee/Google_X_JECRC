@@ -36,10 +36,7 @@ export const analyzeEmergencyImageWithGemini = async (
     };
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey: activeKey });
-    
-    const prompt = `
+  const prompt = `
 You are an emergency response AI called CrisisMind AI.
 
 Analyze the uploaded emergency image.
@@ -62,97 +59,109 @@ Schema:
 }
 `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: prompt },
-            {
-              inlineData: {
-                data: imageBase64,
-                mimeType: mimeType
+  const ai = new GoogleGenAI({ apiKey: activeKey });
+  const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+
+  let lastError: any = null;
+
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`Sending image to Gemini API with model: ${modelName}...`);
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: prompt },
+              {
+                inlineData: {
+                  data: imageBase64,
+                  mimeType: mimeType
+                }
               }
-            }
-          ]
-        }
-      ]
-    });
+            ]
+          }
+        ]
+      });
 
-    const text = response.text || '';
-    const cleanJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const parsed = JSON.parse(cleanJson);
+      const text = response.text || '';
+      const cleanJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
 
-    const severityMap: Record<string, 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'> = {
-      'critical': 'CRITICAL',
-      'high': 'HIGH',
-      'medium': 'MEDIUM',
-      'low': 'LOW'
-    };
+      const severityMap: Record<string, 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'> = {
+        'critical': 'CRITICAL',
+        'high': 'HIGH',
+        'medium': 'MEDIUM',
+        'low': 'LOW'
+      };
 
-    const parsedSev = String(parsed.severity || 'HIGH').toLowerCase();
-    const normalizedSeverity = severityMap[parsedSev] || 'HIGH';
+      const parsedSev = String(parsed.severity || 'HIGH').toLowerCase();
+      const normalizedSeverity = severityMap[parsedSev] || 'HIGH';
 
-    return {
-      id: `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      title: parsed.summary ? parsed.summary.split('.')[0] : 'Emergency Scene Detected',
-      imageUrl: `data:${mimeType};base64,${imageBase64}`,
-      severity: normalizedSeverity,
-      confidence: parsed.confidence || 96,
-      summary: parsed.summary || 'Emergency incident detected requiring rapid triage and emergency service dispatch.',
-      peopleDetected: parsed.people_detected || 2,
-      vehiclesDetected: parsed.detected_objects?.filter((o: string) => /car|vehicle|truck|bus|bike/i.test(o)).length || 1,
-      estimatedInjuries: parsed.injuries?.length || 1,
-      injuries: parsed.injuries || ['Possible trauma'],
-      hazards: parsed.hazards || ['Emergency Hazard', 'Road Blocked'],
-      detectedObjects: parsed.detected_objects || ['Vehicle', 'Debris'],
-      immediateActions: parsed.immediate_actions || ['Move away from danger', 'Call emergency hotline'],
-      medicalAdvice: ['Maintain c-spine stabilization', 'Apply pressure to bleeding areas'],
-      fireRisk: parsed.hazards?.some((h: string) => /fire|flame|smoke/i.test(h)) || false,
-      fuelLeakage: parsed.hazards?.some((h: string) => /fuel|gas|leak/i.test(h)) || false,
-      roadBlocked: true,
-      rescuePriority: normalizedSeverity === 'CRITICAL' || normalizedSeverity === 'HIGH' ? 'URGENT' : 'STANDARD',
-      sosMessage: parsed.sos_message || 'Emergency! Accident detected. Need immediate medical support.',
-      voiceResponse: parsed.voice_response || 'Emergency situation detected. Move to safe distance and await ambulance.',
-      locationName: 'Jaipur Sector Emergency Spot (GPS active)',
-      coordinates: { lat: 26.9124, lng: 75.7873 },
-      timeline: [
-        {
-          timeframe: '0 - 2 Min',
-          title: 'Immediate Threat Containment',
-          riskDescription: 'Primary hazard evolution in initial minutes after incident.',
-          priorityAction: parsed.immediate_actions?.[0] || 'Evacuate immediate 15m radius.',
-          severity: 'critical'
-        },
-        {
-          timeframe: '2 - 5 Min',
-          title: 'Secondary Escalation Risk',
-          riskDescription: 'Traffic bottleneck and environmental exposure threat.',
-          priorityAction: 'Deploy warning markers to prevent secondary pileup.',
-          severity: 'warning'
-        },
-        {
-          timeframe: '5 - 10 Min',
-          title: 'Medical Triage Phase',
-          riskDescription: 'Patient shock progression and emergency unit arrival window.',
-          priorityAction: 'Maintain compression dressings and await trauma ambulance.',
-          severity: 'info'
-        }
-      ],
-      recommendedServices: parsed.recommended_services || ['Ambulance', 'Police']
-    };
-
-  } catch (error) {
-    console.error('Gemini vision analysis failed, falling back:', error);
-    const fallbackPreset = PRESET_EMERGENCIES[0].mockData;
-    return {
-      ...fallbackPreset,
-      id: `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
+      return {
+        id: `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        title: parsed.summary ? parsed.summary.split('.')[0] : 'Emergency Scene Detected',
+        imageUrl: `data:${mimeType};base64,${imageBase64}`,
+        severity: normalizedSeverity,
+        confidence: parsed.confidence || 96,
+        summary: parsed.summary || 'Emergency incident detected requiring rapid triage and emergency service dispatch.',
+        peopleDetected: parsed.people_detected || 2,
+        vehiclesDetected: parsed.detected_objects?.filter((o: string) => /car|vehicle|truck|bus|bike/i.test(o)).length || 1,
+        estimatedInjuries: parsed.injuries?.length || 1,
+        injuries: parsed.injuries || ['Possible trauma'],
+        hazards: parsed.hazards || ['Emergency Hazard', 'Road Blocked'],
+        detectedObjects: parsed.detected_objects || ['Vehicle', 'Debris'],
+        immediateActions: parsed.immediate_actions || ['Move away from danger', 'Call emergency hotline'],
+        medicalAdvice: ['Maintain c-spine stabilization', 'Apply pressure to bleeding areas'],
+        fireRisk: parsed.hazards?.some((h: string) => /fire|flame|smoke/i.test(h)) || false,
+        fuelLeakage: parsed.hazards?.some((h: string) => /fuel|gas|leak/i.test(h)) || false,
+        roadBlocked: true,
+        rescuePriority: normalizedSeverity === 'CRITICAL' || normalizedSeverity === 'HIGH' ? 'URGENT' : 'STANDARD',
+        sosMessage: parsed.sos_message || 'Emergency! Accident detected. Need immediate medical support.',
+        voiceResponse: parsed.voice_response || 'Emergency situation detected. Move to safe distance and await ambulance.',
+        locationName: 'Jaipur Sector Emergency Spot (GPS active)',
+        coordinates: { lat: 26.9124, lng: 75.7873 },
+        timeline: [
+          {
+            timeframe: '0 - 2 Min',
+            title: 'Immediate Threat Containment',
+            riskDescription: 'Primary hazard evolution in initial minutes after incident.',
+            priorityAction: parsed.immediate_actions?.[0] || 'Evacuate immediate 15m radius.',
+            severity: 'critical'
+          },
+          {
+            timeframe: '2 - 5 Min',
+            title: 'Secondary Escalation Risk',
+            riskDescription: 'Traffic bottleneck and environmental exposure threat.',
+            priorityAction: 'Deploy warning markers to prevent secondary pileup.',
+            severity: 'warning'
+          },
+          {
+            timeframe: '5 - 10 Min',
+            title: 'Medical Triage Phase',
+            riskDescription: 'Patient shock progression and emergency unit arrival window.',
+            priorityAction: 'Maintain compression dressings and await trauma ambulance.',
+            severity: 'info'
+          }
+        ],
+        recommendedServices: parsed.recommended_services || ['Ambulance', 'Police']
+      };
+    } catch (error) {
+      console.warn(`Gemini model ${modelName} failed or exhausted, trying next fallback...`, error);
+      lastError = error;
+    }
   }
+
+  console.error('All Gemini vision models failed or rate-limited. Falling back to preset analysis:', lastError);
+  const fallbackPreset = PRESET_EMERGENCIES[0].mockData;
+  return {
+    ...fallbackPreset,
+    id: `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    imageUrl: `data:${mimeType};base64,${imageBase64}`,
+  };
 };
 
 export const translateEmergencyText = async (
@@ -174,15 +183,20 @@ export const translateEmergencyText = async (
     return mockTranslations[targetLangName] || `[${targetLangName} Translation]: ${text}`;
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey: activeKey });
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Translate the following emergency SOS message into ${targetLangName}. Keep it clear, urgent, and accurate for emergency responders:\n\n"${text}"`
-    });
-    return response.text?.trim() || text;
-  } catch (err) {
-    console.error('Gemini translation error:', err);
-    return text;
+  const ai = new GoogleGenAI({ apiKey: activeKey });
+  const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+
+  for (const modelName of modelsToTry) {
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: `Translate the following emergency SOS message into ${targetLangName}. Keep it clear, urgent, and accurate for emergency responders:\n\n"${text}"`
+      });
+      return response.text?.trim() || text;
+    } catch (err) {
+      console.warn(`Translation with ${modelName} failed, retrying...`, err);
+    }
   }
+
+  return text;
 };
