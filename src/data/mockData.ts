@@ -1,6 +1,88 @@
 import type { PresetEmergency, IncidentRecord, NearbyService } from '../types/Emergency';
+import earthquakeImg from '../assets/earthquake-disaster.png';
 
 export const PRESET_EMERGENCIES: PresetEmergency[] = [
+  {
+    id: 'preset-earthquake-disaster',
+    title: 'Severe Earthquake Structural Collapse',
+    category: 'Natural Disaster',
+    imageUrl: earthquakeImg,
+    description: 'Catastrophic seismic damage showing tilted residential buildings, collapsed tile roofs, downed power lines, and debris blocking narrow roads.',
+    mockData: {
+      id: 'INC-2026- earthquake-1',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      title: 'Earthquake Structural Collapse & Powerline Failure',
+      imageUrl: earthquakeImg,
+      severity: 'CRITICAL',
+      confidence: 98,
+      summary: 'Catastrophic seismic event resulting in severe structural displacement of multiple residential buildings, collapsed roofs, and heavy debris blocking emergency access corridors. Immediate urban search-and-rescue (USAR) required.',
+      peopleDetected: 4,
+      vehiclesDetected: 0,
+      estimatedInjuries: 3,
+      injuries: [
+        'Traumatic crush injury from falling roof tiles',
+        'Severe extremity fractures',
+        'Dust inhalation airway distress'
+      ],
+      hazards: [
+        'Structural Collapse Hazard',
+        'Tilted Leaning Buildings',
+        'Downed Live Power Lines',
+        'Road Access Debris Blockade',
+        'Secondary Aftershock Vulnerability'
+      ],
+      detectedObjects: [
+        'Tilted Two-Story House',
+        'Collapsed Tile Roof',
+        'Downed Utility Pole Lines',
+        'Rubble & Debris Pile',
+        'Safety Traffic Cones',
+        'Narrow Access Street'
+      ],
+      immediateActions: [
+        'Do not enter heavily tilted or partially collapsed wooden/tile structures.',
+        'Isolate local electrical grid to prevent sparking live downed power lines.',
+        'Establish 30-meter exclusion perimeter around leaning buildings.',
+        'Deploy Urban Search and Rescue (USAR) team with acoustic search probes.'
+      ],
+      medicalAdvice: [
+        'Apply c-spine collar and rigid backboard before moving crush victims.',
+        'Provide high-flow oxygen for particulate dust inhalation.'
+      ],
+      fireRisk: true,
+      fuelLeakage: false,
+      roadBlocked: true,
+      rescuePriority: 'URGENT',
+      sosMessage: 'SEISMIC EMERGENCY ALERT! Structural collapse of multiple houses near Central Zone. 3 occupants trapped under roof debris. Downed power lines blocking narrow street. Urgent USAR & Heavy Rescue required.',
+      voiceResponse: 'Critical earthquake disaster detected. Multiple buildings have collapsed or tilted dangerously. Stay clear of leaning structures and watch for live electrical lines.',
+      locationName: 'Jaipur Disaster Zone, Seismic Sector 4',
+      coordinates: { lat: 26.9124, lng: 75.7873 },
+      recommendedServices: ['Urban Search & Rescue (USAR)', 'Heavy Lifting Crane Unit', 'Disaster Trauma Medical Squad'],
+      timeline: [
+        {
+          timeframe: '0 - 2 Min',
+          title: 'Secondary Collapse & Electrical Shock Risk',
+          riskDescription: 'Live electrical lines contacting metallic roof gutters and unstable leaning walls.',
+          priorityAction: 'Cut power at neighborhood sub-station, clear immediate street perimeter.',
+          severity: 'critical'
+        },
+        {
+          timeframe: '2 - 5 Min',
+          title: 'Victim Asphyxiation & Entrapment',
+          riskDescription: 'Particulate plaster dust inhalation and heavy tile roof compression.',
+          priorityAction: 'Provide manual ventilation and clear primary breathing airways.',
+          severity: 'critical'
+        },
+        {
+          timeframe: '5 - 10 Min',
+          title: 'Aftershock Readiness & Stabilization',
+          riskDescription: 'Potential seismic aftershocks destabilizing structural foundations.',
+          priorityAction: 'Anchor support struts around leaning residential facades.',
+          severity: 'warning'
+        }
+      ]
+    }
+  },
   {
     id: 'preset-car-crash',
     title: 'Highway Multi-Vehicle Crash',
@@ -138,74 +220,6 @@ export const PRESET_EMERGENCIES: PresetEmergency[] = [
         }
       ]
     }
-  },
-  {
-    id: 'preset-urban-flood',
-    title: 'Flash Flood Submersion',
-    category: 'Natural Disaster',
-    imageUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1000&q=80',
-    description: 'Submerged passenger vehicle in rapid urban floodwaters with stranded occupants.',
-    mockData: {
-      id: 'INC-2026-7819',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      title: 'Submerged Vehicle & Rapid Water Current',
-      imageUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1000&q=80',
-      severity: 'HIGH',
-      confidence: 94,
-      summary: 'Passenger sedan trapped in fast-flowing urban underpass floodwaters. Occupants elevated on roof. Aquatic rescue and flotation lines required.',
-      peopleDetected: 2,
-      vehiclesDetected: 1,
-      estimatedInjuries: 1,
-      injuries: ['Hypothermia & exhaustion', 'Minor contusions'],
-      hazards: [
-        'Fast-Moving Water Current',
-        'Vehicle Inundation',
-        'Submerged Debris Hazard',
-        'Powerline Electrical Risk'
-      ],
-      detectedObjects: ['Submerged Sedan', 'Urban Underpass Water', 'Stranded Occupants', 'Floating Trash Debris'],
-      immediateActions: [
-        'Advise occupants to remain on vehicle roof if interior is filling.',
-        'Do not attempt wading through water exceeding knee depth.',
-        'Throw flotation device attached to safety line.'
-      ],
-      medicalAdvice: [
-        'Check for signs of hypothermia and accidental aspiration.',
-        'Keep patient elevated and warm.'
-      ],
-      fireRisk: false,
-      fuelLeakage: false,
-      roadBlocked: true,
-      rescuePriority: 'HIGH',
-      sosMessage: 'FLOOD EMERGENCY! Vehicle submerged in MI Road Underpass. 2 people stranded on vehicle roof in swift current. Dispatch Aquatic Rescue Boat immediately.',
-      voiceResponse: 'Flash flood submergence detected. Occupants should stay on vehicle roof and avoid wading into swift water currents.',
-      locationName: 'Underpass Crossing, MI Road, Jaipur',
-      coordinates: { lat: 26.9180, lng: 75.8050 },
-      recommendedServices: ['Aquatic Rescue Team', 'Amphibious Vehicle Unit', 'Emergency Medical Service'],
-      timeline: [
-        {
-          timeframe: '0 - 2 Min',
-          title: 'Vehicle Hydrostatic Buoyancy Loss',
-          riskDescription: 'Water entering engine compartment causing vehicle displacement downstream.',
-          priorityAction: 'Anchor rescue ropes to solid fixed structures upstream.',
-          severity: 'critical'
-        },
-        {
-          timeframe: '2 - 5 Min',
-          title: 'Hypothermia & Muscle Exhaustion',
-          riskDescription: 'Prolonged exposure to cold swift water draining victim stamina.',
-          priorityAction: 'Deploy inflatable rescue raft to extract occupants.',
-          severity: 'warning'
-        },
-        {
-          timeframe: '5 - 10 Min',
-          title: 'Downstream Debris Accumulation',
-          riskDescription: 'Floating logs and urban trash accumulating against vehicle chassis.',
-          priorityAction: 'Clear downstream drainage grid under emergency supervisor oversight.',
-          severity: 'info'
-        }
-      ]
-    }
   }
 ];
 
@@ -281,32 +295,4 @@ export const INITIAL_INCIDENTS_HISTORY: IncidentRecord[] = [
   PRESET_EMERGENCIES[0].mockData as IncidentRecord,
   PRESET_EMERGENCIES[1].mockData as IncidentRecord,
   PRESET_EMERGENCIES[2].mockData as IncidentRecord,
-  {
-    id: 'INC-2026-1022',
-    timestamp: '09:15 AM',
-    title: 'Gas Cylinder Leak in Residential Block',
-    imageUrl: 'https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&w=800&q=80',
-    severity: 'MEDIUM',
-    confidence: 92,
-    summary: 'LPG cylinder leak detected in apartment kitchen. Odor threshold reached. Shut off main valve immediately.',
-    peopleDetected: 5,
-    vehiclesDetected: 0,
-    estimatedInjuries: 0,
-    injuries: [],
-    hazards: ['LPG Gas Odor', 'Explosion Hazard'],
-    detectedObjects: ['Gas Cylinder', 'Kitchen Counter'],
-    immediateActions: ['Shut main valve', 'Open windows', 'Do not flip light switches'],
-    medicalAdvice: ['Evacuate to open air'],
-    fireRisk: true,
-    fuelLeakage: true,
-    roadBlocked: false,
-    rescuePriority: 'STANDARD',
-    sosMessage: 'GAS LEAK ALERT! Residential gas cylinder leak in Vaishali Nagar. Windows opened, valve shut. Need gas safety squad check.',
-    voiceResponse: 'Residential LPG gas leak detected. Please shut main valve and open all windows. Avoid creating sparks or flipping switches.',
-    locationName: 'Vaishali Nagar, Sector 3, Jaipur',
-    coordinates: { lat: 26.9000, lng: 75.7400 },
-    timeline: [],
-    recommendedServices: ['Gas Emergency Squad'],
-    status: 'RESOLVED'
-  }
 ];

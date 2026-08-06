@@ -32,7 +32,7 @@ export default function App() {
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_GEMINI_API_KEY || '');
 
-  // Active Emergency State
+  // Active Emergency State (Defaults to User Earthquake Image preset)
   const [currentAnalysis, setCurrentAnalysis] = useState<EmergencyAnalysis>(
     PRESET_EMERGENCIES[0].mockData
   );
