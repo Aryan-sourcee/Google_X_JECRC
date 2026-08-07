@@ -11,7 +11,7 @@
 
 ### **"Transform any emergency photo into an actionable rescue plan in under 10 seconds."**
 
-[Repository](https://github.com/Aryan-sourcee/Google_X_JECRC) • [Submission Showcase](AI_STUDIO_SHOWCASE.md) • [Demo Video / App](http://localhost:5173/)
+[Repository](https://github.com/Aryan-sourcee/Google_X_JECRC) • [Submission Showcase](AI_STUDIO_SHOWCASE.md) • [Demo App](http://localhost:5173/)
 
 ---
 
@@ -35,6 +35,38 @@
 
 - **Aryan Meena** — *Lead Developer* (`aryan.meena@crisismind.ai`)
 - **Lakshaya Kumawat** — *Collaborator* (`lakshaya.kumawat@crisismind.ai`)
+
+---
+
+## 📷 Verified Emergency Demo Scenarios
+
+### Scenario 1: Multi-Vehicle Intersection Collision
+
+<div align="center">
+  <img src="./src/assets/intersection-car-crash.png" alt="Scenario 1: Multi-Vehicle Intersection Collision" width="750" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+</div>
+
+- **Input Scene**: Red hatchback with severe side compression, white passenger sedan, downed motorcycle, crosswalk asphalt, and gathered bystanders at St. Wilfred College intersection.
+- **AI Analysis Output**:
+  - **Severity**: 🔴 HIGH / CRITICAL (97% Confidence)
+  - **Detected Vehicles**: 3 Vehicles (Red Hatchback, White Sedan, Motorcycle)
+  - **Identified Hazards**: Multi-Vehicle Crash, Intersection Traffic Blockade, Radiator & Fluid Leakage, Shattered Glass Debris.
+  - **Immediate Protocol**: Divert oncoming intersection traffic, immobilize motorcyclist cervical spine, disconnect car battery cables, request 108 Trauma Ambulance.
+
+---
+
+### Scenario 2: Severe Earthquake & Structural Collapse
+
+<div align="center">
+  <img src="./src/assets/earthquake-disaster.png" alt="Scenario 2: Severe Earthquake Structural Collapse" width="750" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+</div>
+
+- **Input Scene**: Residential neighborhood showing 45° tilted two-story buildings, collapsed tile roofs, downed utility lines, and debris blocking narrow access roads.
+- **AI Analysis Output**:
+  - **Severity**: 🔴 CRITICAL (98% Confidence)
+  - **Detected Objects**: Tilted Two-Story House, Collapsed Tile Roof, Downed Utility Lines, Rubble Pile, Safety Cones.
+  - **Primary Hazards**: Structural Collapse Hazard, Tilted Leaning Buildings, Downed Live Power Lines, Road Debris Blockade.
+  - **Immediate Protocol**: 30-meter exclusion perimeter around leaning buildings, isolate local electrical grid, deploy Urban Search and Rescue (USAR) acoustic search probes.
 
 ---
 
@@ -85,18 +117,6 @@
 
 ---
 
-## 📷 Verified Emergency Demo Scenarios
-
-### Scenario 1: Multi-Vehicle Intersection Collision
-- **Input**: Red hatchback with severe side compression, white sedan, and downed motorcycle at a busy city intersection.
-- **Output**: 🔴 HIGH / CRITICAL • 97% Confidence • 3 Vehicles • Cervical spine triage & traffic isolation protocol.
-
-### Scenario 2: Severe Earthquake & Structural Collapse
-- **Input**: 45° tilted residential buildings, collapsed tile roofs, downed utility lines, and debris-blocked street.
-- **Output**: 🔴 CRITICAL • 98% Confidence • Urban Search & Rescue (USAR) acoustic probe directive.
-
----
-
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
@@ -142,6 +162,8 @@
 Google_X_JECRC/
 ├── src/
 │   ├── assets/              # Emergency disaster & crash test images
+│   │   ├── intersection-car-crash.png  # Multi-vehicle crash demo image
+│   │   └── earthquake-disaster.png     # Structural collapse demo image
 │   ├── components/          # React views & UI components
 │   │   ├── Header.tsx       # Google-styled main menu bar & status pills
 │   │   ├── BottomNav.tsx    # Mobile navigation bar
@@ -166,7 +188,7 @@ Google_X_JECRC/
 │   ├── index.css            # Design tokens & Tailwind CSS v4 setup
 │   └── main.tsx             # Application entry point
 ├── AI_STUDIO_SHOWCASE.md   # Google AI Studio submission package & system prompt
-├── README.md                # Project documentation
+├── README.md                # Project documentation with scenario images
 └── vite.config.ts           # Vite build configuration
 ```
 

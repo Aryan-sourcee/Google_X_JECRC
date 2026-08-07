@@ -57,13 +57,25 @@ Return ONLY valid JSON. No markdown code fences. No conversational text.
 ## 📸 Verified Demo Scenarios Tested
 
 ### Scenario 1: Multi-Vehicle City Intersection Collision
-- **Input Scene**: Red hatchback with severe side crush damage, white passenger sedan, downed motorcycle, crosswalk asphalt, and gathered bystanders at St. Wilfred College intersection.
+
+<div align="center">
+  <img src="./src/assets/intersection-car-crash.png" alt="Scenario 1: Multi-Vehicle Intersection Crash" width="700" style="border-radius: 14px;" />
+</div>
+
+- **Input Scene**: Red hatchback with severe side compression, white passenger sedan, downed motorcycle, crosswalk asphalt, and gathered bystanders at St. Wilfred College intersection.
 - **AI Output**:
   - **Severity**: 🔴 HIGH / CRITICAL (97% Confidence)
   - **Detected Vehicles**: 3 (Red Hatchback, White Sedan, Motorcycle)
-  - **Primary Protocol**: Divert oncoming intersection traffic, immobilize motorcyclist cervical spine, disconnect battery terminals, request 108 Trauma Ambulance.
+  - **Primary Protocol**: Divert oncoming intersection traffic, immobilize motorcyclist cervical spine, disconnect car battery cables, request 108 Trauma Ambulance.
+
+---
 
 ### Scenario 2: Severe Earthquake & Structural Collapse
+
+<div align="center">
+  <img src="./src/assets/earthquake-disaster.png" alt="Scenario 2: Severe Earthquake Structural Collapse" width="700" style="border-radius: 14px;" />
+</div>
+
 - **Input Scene**: Residential neighborhood showing 45° tilted two-story buildings, collapsed tile roofs, downed utility lines, and debris blocking narrow access roads.
 - **AI Output**:
   - **Severity**: 🔴 CRITICAL (98% Confidence)
