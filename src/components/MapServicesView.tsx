@@ -8,12 +8,10 @@ interface MapServicesViewProps {
 }
 
 export const MapServicesView: React.FC<MapServicesViewProps> = ({
-  locationName = 'NH-48 Corridor, Near Exit 14, Jaipur, Rajasthan',
+  locationName = 'Jaipur Sector Emergency Spot (GPS active)',
 }) => {
   const [selectedService, setSelectedService] = useState<NearbyService>(NEARBY_SERVICES_MOCK[0]);
   const [activeFilter, setActiveFilter] = useState<'all' | 'hospital' | 'police' | 'ambulance' | 'shelter'>('all');
-
-  const mapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   const filteredServices = NEARBY_SERVICES_MOCK.filter(
     (s) => activeFilter === 'all' || s.type === activeFilter
@@ -24,6 +22,9 @@ export const MapServicesView: React.FC<MapServicesViewProps> = ({
     window.open(url, '_blank');
   };
 
+  const currentSearchQuery = selectedService.address || locationName;
+  const embedMapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(currentSearchQuery)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-6">
       {/* Top Banner & Quick Metrics */}
@@ -31,7 +32,7 @@ export const MapServicesView: React.FC<MapServicesViewProps> = ({
         <div>
           <div className="flex items-center space-x-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
             <Compass className="h-4 w-4 animate-spin-slow" />
-            <span>Google Maps JavaScript & Places API Active</span>
+            <span>Google Maps Live Emergency Response Network</span>
           </div>
           <h1 className="text-2xl font-extrabold text-white mt-1">Nearest Emergency Response Nodes</h1>
           <p className="text-xs text-slate-300 flex items-center space-x-1 mt-1">
@@ -59,71 +60,17 @@ export const MapServicesView: React.FC<MapServicesViewProps> = ({
         {/* Map View Box (7 Cols on desktop) */}
         <div className="lg:col-span-7 flex flex-col space-y-4">
           <div className="relative h-[440px] w-full overflow-hidden rounded-3xl border border-white/15 bg-slate-950 shadow-2xl">
-            {mapsApiKey && mapsApiKey !== 'your_google_maps_api_key_here' ? (
-              <iframe
-                title="Live Google Maps Emergency View"
-                width="100%"
-                height="100%"
-                style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps/embed/v1/place?key=${mapsApiKey}&q=${encodeURIComponent(selectedService.address || locationName)}`}
-                className="h-full w-full rounded-3xl"
-              />
-            ) : (
-              /* Simulated Dark Google Map Layer */
-              <>
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]" />
-                <svg className="absolute inset-0 h-full w-full opacity-30" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M 0 100 Q 200 150 400 100 T 800 200" stroke="#4285F4" strokeWidth="6" fill="none" />
-                  <path d="M 150 0 Q 250 200 150 400" stroke="#34A853" strokeWidth="4" fill="none" />
-                  <path d="M 0 300 Q 300 250 600 350" stroke="#EA4335" strokeWidth="4" strokeDasharray="8 8" fill="none" />
-                </svg>
-
-                {/* Incident Pin Pulsing */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-red-600 shadow-xl shadow-red-600/50">
-                    <span className="absolute h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-                    <MapPin className="h-6 w-6 text-white" />
-                  </div>
-                  <span className="mt-1 rounded-full bg-slate-950/90 px-2.5 py-0.5 text-[10px] font-bold text-red-400 border border-red-500/40 backdrop-blur-md">
-                    EMERGENCY ACCIDENT SPOT
-                  </span>
-                </div>
-
-                {/* Service Node Pins */}
-                {NEARBY_SERVICES_MOCK.map((service, index) => {
-                  const isSelected = selectedService.id === service.id;
-                  const offsets = [
-                    { top: '25%', left: '30%' },
-                    { top: '65%', left: '20%' },
-                    { top: '35%', left: '70%' },
-                    { top: '75%', left: '60%' },
-                    { top: '80%', left: '40%' },
-                  ];
-                  const pos = offsets[index % offsets.length];
-
-                  return (
-                    <button
-                      key={service.id}
-                      onClick={() => setSelectedService(service)}
-                      style={{ top: pos.top, left: pos.left }}
-                      className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center space-x-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold shadow-lg transition ${
-                        isSelected
-                          ? 'bg-blue-600 text-white ring-4 ring-blue-500/40 scale-110'
-                          : 'bg-slate-900/90 text-slate-200 border border-white/20 hover:bg-slate-800'
-                      }`}
-                    >
-                      <span>
-                        {service.type === 'hospital' ? '🏥' : service.type === 'police' ? '👮' : service.type === 'ambulance' ? '🚑' : '🏠'}
-                      </span>
-                      <span className="hidden sm:inline">{service.distanceKm} km</span>
-                    </button>
-                  );
-                })}
-              </>
-            )}
+            <iframe
+              title="Live Google Maps Emergency View"
+              width="100%"
+              height="100%"
+              style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src={embedMapUrl}
+              className="h-full w-full rounded-3xl"
+            />
 
             {/* Floating Navigation Trigger Overlay */}
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/90 p-3 backdrop-blur-xl z-10">
